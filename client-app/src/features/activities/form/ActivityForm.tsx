@@ -13,22 +13,24 @@ import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import DateInput from "../../../app/common/form/DateInput";
 import category from "../../../app/common/options/categoryOptions";
-import combineDateAndTime from "../../../app/common/util/util";
+import {combineDateAndTime} from "../../../app/common/util/util";
 import {combineValidators, composeValidators, hasLengthGreaterThan, isRequired} from 'revalidate'
 import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const validate = combineValidators({
-  title: isRequired({message: 'Title is required'}),
-  category: isRequired('Category is required'),
+  title: isRequired({ message: 'The event title is required' }),
+  category: isRequired('Category'),
   description: composeValidators(
     isRequired('Description'),
-    hasLengthGreaterThan(4)({message: 'Must be at least 5 characters'})
+    hasLengthGreaterThan(4)({
+      message: 'Description needs to be at least 5 characters'
+    })
   )(),
   city: isRequired('City'),
-  vanue: isRequired('Venue'),
+  venue: isRequired('Venue'),
   date: isRequired('Date'),
   time: isRequired('Time')
-})
+});
 
 interface DetailParams {
   id: string;
@@ -36,27 +38,26 @@ interface DetailParams {
 
 const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
   match,
-  history,
+  history
 }) => {
   const rootStore = useContext(RootStoreContext);
-
   const {
     createActivity,
     editActivity,
     submitting,
-    loadActivity,
+    loadActivity
   } = rootStore.activityStore;
 
-  const [activity, setActivity] = useState<IActivityFormValues>(
-    new ActivityFormValues()
-  );
+  const [activity, setActivity] = useState(new ActivityFormValues());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (match.params.id) {
       setLoading(true);
       loadActivity(match.params.id)
-        .then((activity) => setActivity(new ActivityFormValues(activity)))
+        .then(activity => {
+          setActivity(new ActivityFormValues(activity));
+        })
         .finally(() => setLoading(false));
     }
   }, [loadActivity, match.params.id]);
@@ -68,7 +69,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
     if (!activity.id) {
       let newActivity = {
         ...activity,
-        id: uuid(),
+        id: uuid()
       };
       createActivity(newActivity);
     } else {
@@ -81,76 +82,79 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({
       <Grid.Column width={10}>
         <Segment clearing>
           <FinalForm
-          validate={validate}
+            validate={validate}
             initialValues={activity}
             onSubmit={handleFinalFormSubmit}
             render={({ handleSubmit, invalid, pristine }) => (
               <Form onSubmit={handleSubmit} loading={loading}>
                 <Field
-                  name="title"
-                  placeholder="Title"
+                  name='title'
+                  placeholder='Title'
                   value={activity.title}
                   component={TextInput}
                 />
                 <Field
-                  name="description"
-                  placeholder="Description"
+                  name='description'
+                  placeholder='Description'
                   rows={3}
                   value={activity.description}
                   component={TextAreaInput}
                 />
                 <Field
-                  name="category"
-                  placeholder="Category"
-                  value={activity.category}
                   component={SelectInput}
                   options={category}
+                  name='category'
+                  placeholder='Category'
+                  value={activity.category}
                 />
-                <FormGroup width="equal">
+                <Form.Group widths='equal'>
                   <Field
-                    name="date"
                     component={DateInput}
-                    placeholder="Date"
+                    name='date'
                     date={true}
+                    placeholder='Date'
                     value={activity.date}
                   />
                   <Field
-                    name="time"
-                    time={true}
                     component={DateInput}
-                    placeholder="Date"
-                    value={activity.date}
+                    name='time'
+                    time={true}
+                    placeholder='Time'
+                    value={activity.time}
                   />
-                </FormGroup>
+                </Form.Group>
+
                 <Field
-                  name="city"
-                  placeholder="City"
-                  value={activity.city}
                   component={TextInput}
+                  name='city'
+                  placeholder='City'
+                  value={activity.city}
                 />
                 <Field
-                  name="venue"
-                  placeholder="Venue"
-                  value={activity.venue}
                   component={TextInput}
+                  name='venue'
+                  placeholder='Venue'
+                  value={activity.venue}
                 />
                 <Button
                   loading={submitting}
                   disabled={loading || invalid || pristine}
-                  floated="right"
+                  floated='right'
                   positive
-                  type="submit"
-                  content="Submit"
-                ></Button>
+                  type='submit'
+                  content='Submit'
+                />
                 <Button
-                  onClick=
-                    {activity.id ? () => history.push(`/activities/${activity.id}`)
-                  : () => history.push("/activities")}
+                  onClick={
+                    activity.id
+                      ? () => history.push(`/activities/${activity.id}`)
+                      : () => history.push('/activities')
+                  }
                   disabled={loading}
-                  floated="right"
-                  type="submit"
-                  content="Cancel"
-                ></Button>
+                  floated='right'
+                  type='button'
+                  content='Cancel'
+                />
               </Form>
             )}
           />
