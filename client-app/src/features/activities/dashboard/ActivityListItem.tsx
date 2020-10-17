@@ -1,8 +1,7 @@
 import React from "react";
 import { Item, Button, Segment, Icon, Label } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-// import ActivityStore from "../../../app/stores/activityStore";
-import { IActivity, IAttendee } from "../../../app/models/activity";
+import { IActivity } from "../../../app/models/activity";
 import { format } from "date-fns";
 import ActivityListItemAttendees from "./ActivityListItemAttendees";
 

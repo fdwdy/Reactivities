@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Segment, Form, Button, Grid, FormGroup } from "semantic-ui-react";
+import { Segment, Form, Button, Grid } from "semantic-ui-react";
 import {
   ActivityFormValues,
-  IActivityFormValues,
 } from "../../../app/models/activity";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
